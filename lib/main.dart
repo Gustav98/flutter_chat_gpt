@@ -1,9 +1,11 @@
-// ignore_for_file: prefer_const_constructors
+import 'dart:io';
 
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: './assests/env/storage.env');
   runApp(const MyApp());
 }
 
@@ -40,10 +42,22 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     openAI = OpenAI.instance.build(
-      token: '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',
+      token: dotenv.env['APP_SECRET'],
       baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 25)),
       enableLog: true,
     );
+  }
+
+  void chatCompleteWithSSE() {
+    print(Platform.environment.keys);
+    final request = ChatCompleteText(
+        messages: [Messages(role: Role.user, content: controller.text)],
+        maxToken: 200,
+        model: GptTurbo0631Model());
+
+    openAI.onChatCompletionSSE(request: request).listen((it) {
+      debugPrint(it.choices?.last.message?.content);
+    });
   }
 
   @override
@@ -63,12 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: TextField(
                     controller: controller,
-                    decoration: InputDecoration(hintText: "Type Here..."),
+                    decoration: const InputDecoration(hintText: "Type Here..."),
                   ),
                 ),
                 ElevatedButton(
-                  child: Icon(Icons.send),
-                  onPressed: () {},
+                  child: const Icon(Icons.send),
+                  onPressed: () => chatCompleteWithSSE(),
                 )
               ],
             )

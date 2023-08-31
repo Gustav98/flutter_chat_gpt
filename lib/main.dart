@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,6 +35,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController controller = TextEditingController();
   String results = "Resultas are be shown here";
+  late OpenAI openAI;
+  @override
+  void initState() {
+    super.initState();
+    openAI = OpenAI.instance.build(
+      token: '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',
+      baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 25)),
+      enableLog: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

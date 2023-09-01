@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: './assests/env/storage.env');
+  await dotenv.load(fileName: 'env/storage.env');
   runApp(const MyApp());
 }
 
@@ -49,7 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void chatCompleteWithSSE() {
-    print(Platform.environment.keys);
     final request = ChatCompleteText(
         messages: [Messages(role: Role.user, content: controller.text)],
         maxToken: 200,
